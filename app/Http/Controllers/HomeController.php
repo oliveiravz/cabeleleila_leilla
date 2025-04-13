@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -9,7 +9,7 @@ class HomeController extends Controller
     public function index()
     {
 
-        $user = Session::get('user');
+        $user = Auth::user();
         
         return view('home', compact('user'));
     }

@@ -1,9 +1,9 @@
 @extends('layouts.header')
 
 @section('content')
-<section class="vh-100" style="background-color: #9A616D;">
+<section class="vh-100 mb-4" style="background-color: #9A616D;">
     <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="row d-flex justify-content-center align-items-center">
             <div class="col col-xl-10">
                 <div class="card" style="border-radius: 1rem;">
                     <div class="row g-0">
@@ -16,34 +16,35 @@
 
                                 <form id="login-form" method="POST" action="/login">
 
-                                    <div class="d-flex align-items-center mb-3 pb-1">
-                                        <img src="{{ asset('assets/images/cabeleleila_leila.png') }}" class="img-fluid"
-                                            alt="Sample image" width='100px' height='100px'>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <img src="{{ asset('assets/images/cabeleleila_leila.png') }}" class="img-fluid" alt="Sample image" width='100px' height='100px'>
                                     </div>
 
-                                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Entre na sua conta
-                                    </h5>
-
-                                    <div data-mdb-input-init class="form-outline mb-4">
-                                        <input type="email" id="email" name='email' class="form-control form-control-lg" value='leila@cabeleleila.com'/>
-                                        <label class="form-label" for="email">E-mail</label>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Entre na sua conta </h5>
                                     </div>
 
                                     <div data-mdb-input-init class="form-outline mb-4">
-                                        <input type="password" id="password" name="password" class="form-control form-control-lg" value="senha_super_secreta"/>
+                                        <label class="form-label" for="email">E-mail</label> 
+                                        <input type="email" id="email" name='email' class="form-control form-control-lg"/>
+                                    </div>
+
+                                    <div data-mdb-input-init class="form-outline mb-4">
                                         <label class="form-label" for="senha">Senha</label>
+                                        <input type="password" id="password" name="password" class="form-control form-control-lg"/>
                                     </div>
 
-                                    <div class="text-center text-lg-start mt-4 pt-2">
+                                    <div class="mt-4 d-flex justify-content-center">
                                         <input type="submit" class="btn btn-dark btn-lg"
-                                            style="padding-left: 2.5rem; padding-right: 2.5rem;" value="Login">
+                                            style="padding-left: 4.5rem; padding-right: 4.5rem;" value="Login">
                                     </div>
-
-                                    <a class="small text-muted" href="#!">Esqueceu sua senha?</a>
-                                    <p class="mb-5 pb-lg-2" style="color: #393f81;">Não tem uma conta? <a href="#!"
-                                            style="color: #393f81;">Crie uma conta</a></p>
+                                    
+                                    <div class="mt-4 pt-2">
+                                        <p class="mb-5 pb-lg-2" style="color: #393f81;">Não tem uma conta? <a href="/users"
+                                                style="color: #393f81;">Crie uma conta</a></p>
+                                    </div>
+                                 
                                 </form>
-
                             </div>
                         </div>
                     </div>

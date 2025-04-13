@@ -8,10 +8,9 @@ use Exception;
 
 class BookingModel extends Model
 {
-
-    protected $table = "booking";
-    
     public $timestamps = false;
+    protected $table = "booking";
+    protected $primaryKey = 'booking_id';
     protected $fillable = [
         "date",
         "user_id",
@@ -83,21 +82,79 @@ class BookingModel extends Model
         return $data ?? [];
     }
 
-    public function validateBookingDate(int $idCostumer, $date)
+    public function getBookingsByPeriod()
     {
+        $bookings = DB::select("   
+            WITH RECURSIVE weekday AS (
+                SELECT CURDATE() - INTERVAL 6 DAY AS day
+                UNION ALL
+                SELECT day + INTERVAL 1 DAY
+                FROM weekday
+                WHERE day + INTERVAL 1 DAY <= CURDATE()
+            )
+
+            SELECT 
+                ds.day,
+                COUNT(b.booking_id) AS bookings_total,
+                IFNULL(SUM(s.price), 0) AS sum_price
+            FROM weekday ds
+            LEFT JOIN booking b ON DATE(b.date) = ds.day
+            LEFT JOIN service s ON s.service_id = b.service_id
+            GROUP BY ds.day
+            ORDER BY ds.day
+        ");
+
+        $data = array_map(function($item) {
+
+            $item = (array) $item;
+
+            $item["day"] = date('d/m/Y', strtotime($item['day']));
+            $item['sum_price'] = 'R$ ' . number_format($item['sum_price'], 2, ',', '.');
+
+            return $item;
+
+        }, $bookings);
+        
+        return $data ?? [];
+        
+    }
+
+    public function validateBookingDate(int $bookingId)
+    {
+        
+        $timezone = new \DateTimeZone('America/Sao_Paulo');
+
+        $newDate = new \DateTime(date('Y-m-d'), $timezone);
 
         $bookingDate = DB::table($this->table)
-                    ->where("{$this->table}.user_id", $idCostumer)
-                    ->whereDate("{$this->table}.date", $date)
+                    ->where("{$this->table}.booking_id", $bookingId)
                     ->select(
-                        "{$this->table}.service_id"
-                    )->get();
+                        "{$this->table}.date"
+                    )->first();
+
+        if(count((array) $bookingDate) > 0) {
+
+            $originalDate = new \DateTime($bookingDate->date, $timezone);
+            $interval = $originalDate->sub(new \DateInterval('P2D'));
+
+            if($newDate >= $interval) {
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function _save($data)
     {
         try {
             $bookingModel = new self(); 
+
+            if(isset($data["booking_id"])) {
+
+                $bookingModel = self::find($data["booking_id"]);
+            }
     
             $bookingModel->service_id = $data["service"];
             $bookingModel->user_id    = $data["user_id"]; 

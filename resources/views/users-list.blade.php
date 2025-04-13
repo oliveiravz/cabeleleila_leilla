@@ -1,8 +1,6 @@
 @extends('layouts.header')
 
 @include('layouts.navbar')
-<!-- CSS -->
-<link href="{{ asset('assets/css/my-bookings.css') }}" rel="stylesheet">
 
 @section('content')
 <section class="vh-100" style="background-color: #9A616D;">
@@ -13,26 +11,22 @@
                     <div class="row">
                         <div class="col-md-12 col-lg-12 d-flex align-items-center">
                             <div class="card-body p-4 p-lg-5 text-black">
-                                <h5 class="fw-normal mb-3 pb-3 text-center" style="letter-spacing: 1px;">Agendamentos</h5>
-                                <table id="bookings-table" class="table table-striped display">
+                                <h5 class="fw-normal mb-3 pb-3 text-center" style="letter-spacing: 1px;">Usuários Cadastrados</h5>
+                                <table id="users-table" class="table table-striped display">
                                     <thead class="table-dark">
-                                        <th>Serviço</th>
-                                        <th>Data</th>
-                                        <th>Preço</th>
+                                        <th>Nome</th>
+                                        <th>E-mail</th>
+                                        <th>Administrador</th>
                                         <th>Ações</th>
                                     </thead>
                                     <tbody>
-                                        @foreach ($bookings as $key => $booking)
+                                        @foreach ($users as $key => $user)
                                         <tr>
-                                            <td>{{$booking['name']}}</td>
-                                            <td>{{$booking['date']}}</td>
-                                            <td>{{$booking['price']}}</td>
+                                            <td>{{$users[$key]['name']}}</td>
+                                            <td>{{$users[$key]['email']}}</td>
+                                            <td>{{ isset($users[$key]['master']) && $users[$key]['master'] == 1 ? 'Sim' : 'Não'}}</td>
                                             <td id="acoes">
-                                                <button class="btn btn-warning edit-booking-{{$key}}" id="edit-booking-{{$key}}" data-id_booking="{{ $booking['booking_id'] }}">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </button>
-
-                                                <button class="btn btn-danger delete-booking-{{$key}}" data-id_booking="{{ $booking['booking_id'] }}">
+                                                <button class="btn btn-danger delete-user-{{$key}} " data-id_user="{{ $users[$key]['user_id'] }}">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </td>
@@ -55,7 +49,7 @@
 </section>
 
 <!-- VIEW JS -->
-<script type="module" src="{{ asset('assets/viewJs/my-bookings.js') }}"></script>
+<script type="module" src="{{ asset('assets/viewJs/users-list.js') }}"></script>
 
 <!-- DATATABLE -->
 <link href="{{ asset('assets/datatable/datatables.min.css') }}" rel="stylesheet">

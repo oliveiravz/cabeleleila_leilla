@@ -1,5 +1,7 @@
 @extends('layouts.header')
 
+@include('layouts.navbar')
+
 @section('content')
 <section class="vh-100" style="background-color: #9A616D;">
     <div class="container py-5 h-100">
@@ -23,14 +25,14 @@
                                             <div class="row">
                                                 <div class="form-outline col-4">
                                                     <label class="form-label" for="service">Serviço</label>
-                                                    <select class="form-control" name="booking[0][service]" id="service">
+                                                    <select class="form-control is-invalid" name="booking[0][service]" id="service">
                                                         <option value="">Selecione o serviço</option>
                                                         @foreach ($services as $service)
 
                                                         @php
                                                             $isSelected = isset($bookingData) && $bookingData[0]['service_id'] == $service['service_id'] ? 'selected' : '' ;
                                                         @endphp
-                                                        <option value="{{ $service['service_id'] }}" {{$isSelected}}>
+                                                        <option value="{{ $service['service_id'] }}" {{$isSelected}} data-price="{{ $service['price'] }}">
                                                             {{ $service['name'] }}
                                                         </option>
                                                         @endforeach
@@ -41,16 +43,17 @@
                                                     @php
                                                         $date = isset($bookingData) && $bookingData[0]['date'] ? $bookingData[0]['date'] : '' ;
                                                     @endphp
-                                                    <input type="date" id="date" name="booking[0][date]" class="form-control" value="{{$date}}"/>
+                                                    <input type="date" id="date" name="booking[0][date]" class="form-control is-invalid" value="{{$date}}"/>
                                                 </div>
                                                 <div class="form-outline col-4">
                                                     <label class="form-label" for="date">Hora do agendamento</label>
                                                     @php
                                                         $time = isset($bookingData) && $bookingData[0]['time'] ? $bookingData[0]['time'] : '' ;
                                                     @endphp
-                                                    <input type="time" id="time" name="booking[0][time]" class="form-control" value="{{$time}}" />
+                                                    <input type="time" id="time" name="booking[0][time]" class="form-control is-invalid" value="{{$time}}" />
+                                                    
                                                 </div>
-
+                                                <input type="hidden"  name="booking[0][booking_id]" class="form-control" value="{{isset($bookingData) && $bookingData[0]['booking_id'] ? $bookingData[0]['booking_id'] : '' }}" />
                                             </div>
                                         </div>
                                     </div>
@@ -63,8 +66,9 @@
                                             value="Adicionar Serviço">
                                     </div>
                                     @endif
+
                                     <div class="text-center mt-4 pt-2">
-    
+
                                         <input type="submit" class="btn btn-dark btn-lg"
                                             style="padding-left: 2.5rem; padding-right: 2.5rem;" value="Agendar">
                                             

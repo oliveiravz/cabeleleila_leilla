@@ -1,39 +1,15 @@
 $(document).ready(function() {
 
-    $('#bookings-table tbody tr').each(function(index) {
+    $('#users-table tbody tr').each(function(index) {
         let $row = $(this); 
 
-        $(`.edit-booking-${index}`).click(function() {
-            let idBooking = $(this).data('id_booking');
-
-            $.ajax({
-                url: `/booking-register/edit/${idBooking}`,
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') 
-                },
-                success: function (response) {
-                    
-                    window.location.href = `/booking-register/edit/${idBooking}`;
-                },
-                error: function (xhr) {
-                    
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro!',
-                        text: 'Não foi possível carregar os dados do agendamento.'
-                    });
-                }
-            });
-        });
-
-        $(`.delete-booking-${index}`).click(function() {
-            let idBooking = $(this).data('id_booking');
+        $(`.delete-user-${index}`).click(function() {
+            let idUser = $(this).data('id_user');
 
             Swal.fire({
                 
                 title: "Atenção",
-                text: "Deseja excluir agendamento?",
+                text: "Deseja excluir usuário?",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
@@ -44,7 +20,7 @@ $(document).ready(function() {
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `/booking-delete/${idBooking}`,
+                        url: `/user-delete/${idUser}`,
                         method: 'GET',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') 
@@ -52,7 +28,7 @@ $(document).ready(function() {
                         beforeSend: function() {
                             Swal.fire({
                                 title: "Aguarde!",
-                                html: "Excluindo agendamento...",
+                                html: "Excluindo Usuário...",
                                 timerProgressBar: true,
                                 didOpen: () => {
                                     Swal.showLoading();
@@ -83,7 +59,7 @@ $(document).ready(function() {
 
     });
 
-    $('#bookings-table').DataTable({
+    $('#users-table').DataTable({
         ordering: false, 
         language: {
             decimal: ",",
@@ -110,5 +86,5 @@ $(document).ready(function() {
             }
         }
     });
-    
+
 });

@@ -2,7 +2,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB,
+    Illuminate\Support\Facades\Session,
+    Illuminate\Support\Facades\Hash;
+
+use App\Models\UsersModel;
 
 use Exception;
 
@@ -10,42 +14,23 @@ use Exception;
 class LoginModel extends Model
 {
 
-    protected $table = "users";
-    protected $fillable = [];
-
     public function authentication(array $data)
     {
-
         try {
-            
-            $response = [];
-        
-            $email    = trim($data["email"]);
+
+            $email = trim($data["email"]);
             $password = trim($data["password"]);
-    
-            $user = DB::table($this->table)
-                    ->where("{$this->table}.email", $email)
-                    ->where("{$this->table}.password", hash("sha256", $password))
-                    ->select("{$this->table}.user_id", "{$this->table}.name", "{$this->table}.email", "{$this->table}.master")
-                    ->first();
 
-            if(empty($user)) {
-                
-                $response = ["error" => true, "message" => "Usuário não encontrado!"];
+            $user = UsersModel::where('email', $email)->where("deleted", "!=", 1)->first();
 
-            } else {
-
-                $response = [
-                    "errors" => false,
-                    "user" => $user,
-                    "redirect" => true
-                ];
+            if (!$user || !Hash::check($password, $user->password)) {
+                return null; 
             }
 
-            return $response;
-        } catch (\Exception $e) {
+            return $user; 
             
-            return $e->getMessage();
-        }       
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }
