@@ -11,7 +11,7 @@
                     <a class="nav-link active" aria-current="page" href="/home">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/bookings">Agendar</a>
+                    <a class="nav-link" href="/booking">Agendar</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/my-bookings">Agendamentos</a>

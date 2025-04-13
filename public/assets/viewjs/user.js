@@ -34,7 +34,7 @@ $(document).ready(function() {
     
                     if (result.isConfirmed) {
                         setTimeout(function () {
-                            window.location.href = '/my-bookings';
+                            window.location.href = '/users-list';
                         }, 1000);
                     }
                 });
