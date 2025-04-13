@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+
 
 use App\Models\LoginModel;
 use Exception;
@@ -18,7 +20,8 @@ class LoginController extends Controller
     {   
         try {
 
-            $data       = $request->all();
+            $data = $request->only('email', 'password');
+
             $loginModel = new LoginModel();
             $response   = [];
 
@@ -36,10 +39,26 @@ class LoginController extends Controller
 
                 $user = $loginModel->authentication($data);
                 
-                if(count($user) > 0) {
+                if($user) {
 
-                    Session::put('user', $user);
-                    $response = $user;
+                    Auth::login($user);
+
+                    $request->session()->regenerate();
+
+                    $response = [
+                        'error' => false,
+                        'message' => 'Login realizado com sucesso',
+                        'user' => Auth::user(),
+                        'redirect' => true
+                    ];
+                    
+                } else {
+                    $response = [
+                        'error' => true,
+                        'message' => 'Usuário e/ou senha inválidos',
+                        'user' => null,
+                        'redirect' => false
+                    ];
                 }
             }
 

@@ -23,15 +23,26 @@ $(document).ready(function() {
 
             Swal.close();
 
+            if(response.error_date) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ops!',
+                    text: response.messages[0]
+                });
+
+                return
+            }
+
             if(response.errors) {
 
                 handleAjaxErrors(response);
+
             } else {
 
                 Swal.fire({
                     title: "Tudo Certo!",
                     icon: "success",
-                    text: "Seu agendamento foi realizado com sucesso."
+                    text: "Seu agendamento foi realizado com sucesso. Você será redirecionado."
                 }).then((result) => {
 
                     if (result.isConfirmed) {

@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 use App\Models\ServiceModel,
@@ -18,7 +18,8 @@ class BookingController extends Controller
     {
         $this->bookingModel = new BookingModel();
         $this->services = new ServiceModel();
-        $this->userId = Session::get('user')['user']->user_id;
+        $this->userId = Auth::user()->user_id;
+
     }
 
     public function index()
@@ -48,10 +49,11 @@ class BookingController extends Controller
 
     public function registerBooking(Request $request)
     {   
-        
-        $dataAll = $request->all();
-        $errors  = [];
 
+        $dataAll = $request->all();
+
+        $errors  = [];
+        $errorDate = false;
         foreach ($dataAll['booking'] as $key => $data) {
             $service      = trim($data["service"]);
             $date         = $data["date"];
@@ -71,20 +73,39 @@ class BookingController extends Controller
                 $errors[$key]["time"] = "Informe a hora";
             }
 
-            $bookingDate = $this->bookingModel->validateBookingDate($this->userId, $date);
+            if(isset($data["booking_id"])) {
 
-            if(!$this->bookingModel->_save($data)) {
+                $timestampDate = "{$date} {$time}";
+                $bookingDate = $this->bookingModel->validateBookingDate((int) $data["booking_id"], $timestampDate);
+
+                if(!$bookingDate) {
+                    $errorDate = true; 
+                    $errors[] = "A alteração só pode ser feita por telefone, pois faltam menos de 2 dias para a data agendada.";
+                }
+
+            }
+
+            if(count($errors) == 0) {
+
+                if(!$this->bookingModel->_save($data)) {
+                
+                    $errors[] = "Ocorreu um erro ao realizar agendamento.";
                     
-                $errors[] = "Ocorreu um erro ao realizar agendamento.";
+                }
             }
         }
 
+        // dd($errors);
         if(count($errors) > 0) {
 
             $response = [
                 "errors" => true,
                 "messages" => $errors 
             ];
+
+            if($errorDate) {
+                $response['error_date'] = true;
+            }
 
             return response()->json($response);
         }

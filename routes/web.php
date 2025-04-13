@@ -1,24 +1,52 @@
 <?php
-use Illuminate\Support\Facades\Route;
 
-Route::controller(LoginController::class)->group(function () {
-    Route::get('/', 'App\Http\Controllers\LoginController@index');
-    Route::post('/login', 'App\Http\Controllers\LoginController@login');
-});
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\UsersController;
+use App\Http\Middleware\Session;
+use App\Http\Middleware\IsMaster;
 
 Route::middleware(['web'])->group(function () {
-    Route::get('/home', 'App\Http\Controllers\HomeController@index');
-});
 
-Route::controller(BookingController::class)->group(function () {
-    Route::get('/booking','App\Http\Controllers\BookingController@index')->name('booking');
-    Route::post('/booking-register','App\Http\Controllers\BookingController@registerBooking');
-    Route::get('/booking-delete/{id}','App\Http\Controllers\BookingController@deleteBooking');
+    Route::controller(LoginController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/login', 'login');
+    });
 
-    Route::get('/booking-register/{id}','App\Http\Controllers\BookingController@getBookingById');
-    Route::get('/my-bookings','App\Http\Controllers\BookingController@getBookingByCostumer');
-});
+    
+    Route::controller(UsersController::class)->group(function () {
+        Route::get('/users', 'index');
+        Route::post('/users', 'registerUser');
+    });
 
-Route::controller(LogoutController::class)->group(function () {
-    Route::post('/logout','App\Http\Controllers\LogoutController@logout')->name('logout');
+    Route::middleware([Session::class])->group(function () {
+
+        Route::get('/home', [HomeController::class, 'index']);
+
+        Route::controller(BookingController::class)->group(function () {
+            Route::post('/booking-register', 'registerBooking');
+            Route::get('/booking-register/edit/{id}', 'getBookingById');
+            Route::get('/booking', 'index')->name('booking');
+            Route::get('/booking-delete/{id}', 'deleteBooking');
+            Route::get('/my-bookings', 'getBookingByCostumer');
+        });
+
+        Route::middleware(IsMaster::class)->controller(DashboardController::class)->group(function () {
+            Route::get('/dashboard', 'index')->name('dashboard');
+            Route::post('/booking-chart', 'getBookingsByPeriod');
+        });
+
+        Route::middleware(IsMaster::class)->controller(UsersController::class)->group(function () {
+            Route::get('/users-list', 'getAll');
+            Route::get('/user-delete/{id}', 'deleteUser');
+        });
+
+        Route::controller(LogoutController::class)->group(function () {
+            Route::post('/logout', 'logout')->name('logout');
+        });
+    });
 });
